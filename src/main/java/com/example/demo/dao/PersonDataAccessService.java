@@ -8,7 +8,6 @@ import java.util.UUID;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import com.example.demo.DemoApplication;
 import com.example.demo.model.Person;
 
 import org.slf4j.Logger;
