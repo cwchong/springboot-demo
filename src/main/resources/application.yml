@@ -1,0 +1,6 @@
+app:
+  datasource:
+    jdbc-url: jdbc:mysql://127.0.0.1:3306/springboot
+    username: springboot
+    password: password
+    pool-size: 30
