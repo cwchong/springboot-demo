@@ -8,8 +8,11 @@ import java.util.UUID;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import com.example.demo.DemoApplication;
 import com.example.demo.model.Person;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -18,6 +21,7 @@ import org.springframework.stereotype.Repository;
 public class PersonDataAccessService implements PersonDAO {
 
     private final JdbcTemplate jdbcTemplate;
+    private static final Logger LOGGER = LoggerFactory.getLogger(PersonDataAccessService.class);
 
     @Autowired
     public PersonDataAccessService(JdbcTemplate jdbcTemplate) {
@@ -26,12 +30,18 @@ public class PersonDataAccessService implements PersonDAO {
 
     @Override
     public int insertPerson(UUID id, Person person) {
-        // TODO Auto-generated method stub
-        return 0;
+        LOGGER.info("inserting person...");
+        final String sql = "insert into person (id, name) values (?, ?)";
+        return jdbcTemplate.update(
+            sql, 
+            id.toString(),
+            person.getName()
+        );
     }
 
     @Override
     public List<Person> selectAllPeople() {
+        LOGGER.info("selecting all people...");
         final String sql = "select id, name from person";
         RowMapper<Person> rowMapper = (resultSet, i) -> {
             UUID id = UUID.fromString(resultSet.getString("id"));
@@ -43,6 +53,7 @@ public class PersonDataAccessService implements PersonDAO {
 
     @Override
     public Optional<Person> selectPersonById(UUID id) {
+        LOGGER.info("selecting single person...");
         final String sql = "select id, name from person where id = ?";
         RowMapper<Person> rowMapper = (resultSet, i) -> {
             UUID personId = UUID.fromString(resultSet.getString("id"));
@@ -61,14 +72,17 @@ public class PersonDataAccessService implements PersonDAO {
 
     @Override
     public int deletePersonById(UUID id) {
-        // TODO Auto-generated method stub
-        return 0;
+        LOGGER.info("deleting person...");
+        final String sql = "delete from person where id = ?";
+        return jdbcTemplate.update(sql, id.toString());
     }
 
     @Override
     public int updatePersonById(UUID id, Person person) {
-        // TODO Auto-generated method stub
-        return 0;
+        LOGGER.info("updating person...");
+        // would be nice if we dun have to explicitly iterate all fields (like an ORM eg hibernate)
+        final String sql = "update person set name = ? where id = ?";
+        return jdbcTemplate.update(sql, person.getName(), id.toString());
     }
     
 }
